@@ -1,0 +1,10 @@
+.hover:hover{
+    -fx-backgrounf-color: #007aff;
+}
+.root {
+    -fx-background-color: linear-gradient(from 0% 50% to 0% 75%, #044c92, #044888);
+}
+.bar{
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #044c92, #04498c);
+}
+
