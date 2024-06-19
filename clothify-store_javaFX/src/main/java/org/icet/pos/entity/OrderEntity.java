@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Entity(name = "order")
 public class OrderEntity {
     @Id
-    private Integer id;
+    private String id;
     private String name;
 }

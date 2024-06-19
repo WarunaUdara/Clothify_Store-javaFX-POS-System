@@ -1,9 +1,9 @@
-package org.icet.pos.bo;
+package org.icet.pos.bo.factory;
 
-import org.icet.pos.bo.custom.customer.CustomerBoImpl;
-import org.icet.pos.bo.custom.login_page.LoginControllerImpl;
-import org.icet.pos.controller.LoginFormController;
-import org.icet.pos.util.BoType;
+import org.icet.pos.bo.SuperBo;
+import org.icet.pos.bo.custom.impl.AdminDashBoardBoImpl;
+import org.icet.pos.bo.custom.impl.CustomerBoImpl;
+import org.icet.pos.bo.custom.impl.LoginBoImpl;
 
 public class BoFactory {
 
@@ -15,8 +15,9 @@ public class BoFactory {
     public <T extends SuperBo>T getBo(BoType boType){
         switch (boType){
             case CUSTOMER: return (T) new CustomerBoImpl();
-            case ITEM:
-            case LOGIN:return (T)new LoginControllerImpl();
+            case ITEM:return null;
+            case LOGIN:return (T)new LoginBoImpl();
+            case ADMIN_DASHBOARD:return (T) new AdminDashBoardBoImpl();
         }
         return null;
     }

@@ -1,4 +1,4 @@
-package org.icet.pos.bo.custom.customer;
+package org.icet.pos.bo.custom;
 
 import org.icet.pos.bo.SuperBo;
 

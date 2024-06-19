@@ -1,8 +1,8 @@
-package org.icet.pos.dao;
+package org.icet.pos.dao.factory;
 
-import org.icet.pos.dao.custom.customer.CustomerDaoImpl;
-import org.icet.pos.dao.custom.login_page.LoginDaoImpl;
-import org.icet.pos.util.DaoType;
+import org.icet.pos.dao.SuperDao;
+import org.icet.pos.dao.custom.impl.CustomerDaoImpl;
+import org.icet.pos.dao.custom.impl.EmployeeDaoImpl;
 
 public class DaoFactory {
     private static DaoFactory instance;
@@ -14,7 +14,8 @@ public class DaoFactory {
         switch (daoType){
             case CUSTOMER:return (T)  new CustomerDaoImpl();
             case ITEM:;
-            case LOGIN:return (T) new LoginDaoImpl();
+            case EMPLOYEE:return (T) new EmployeeDaoImpl();
+
         }
         return null;
 

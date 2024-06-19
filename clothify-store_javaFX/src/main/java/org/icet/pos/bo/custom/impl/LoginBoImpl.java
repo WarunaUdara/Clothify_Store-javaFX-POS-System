@@ -1,18 +1,19 @@
-package org.icet.pos.bo.custom.login_page;
+package org.icet.pos.bo.custom.impl;
 
 
-import org.icet.pos.dao.DaoFactory;
-import org.icet.pos.dao.custom.login_page.LoginDaoImpl;
+import org.icet.pos.bo.custom.LoginBo;
+import org.icet.pos.dao.factory.DaoFactory;
+import org.icet.pos.dao.custom.impl.EmployeeDaoImpl;
 import org.icet.pos.entity.EmployeeEntity;
 import org.icet.pos.model.EmployeeModel;
-import org.icet.pos.util.DaoType;
+import org.icet.pos.dao.factory.DaoType;
 import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoginControllerImpl implements LoginController {
-    LoginDaoImpl dao= DaoFactory.getInstance().getDao(DaoType.LOGIN);
+public class LoginBoImpl implements LoginBo {
+    EmployeeDaoImpl dao= DaoFactory.getInstance().getDao(DaoType.EMPLOYEE);
 
     @Override
     public List<EmployeeModel> getEmployeeDetail(){

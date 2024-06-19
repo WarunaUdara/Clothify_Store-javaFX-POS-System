@@ -47,12 +47,12 @@
                <Font name="SansSerif Bold" size="15.0" />
             </font>
          </JFXButton>
-         <JFXButton layoutX="89.0" layoutY="297.0" onAction="#btnForgetPasswordOnAction" prefHeight="23.0" prefWidth="113.0" styleClass="hover" stylesheets="@javaFX.css" text="Forget password" textFill="#007aff">
+         <JFXButton fx:id="btnForgetPw" layoutX="89.0" layoutY="297.0" onAction="#btnForgetPasswordOnAction" prefHeight="23.0" prefWidth="113.0" styleClass="hover" stylesheets="@javaFX.css" text="Forget password" textFill="#007aff">
             <font>
                <Font name="SansSerif Regular" size="12.0" />
             </font>
          </JFXButton>
-         <JFXButton layoutX="181.0" layoutY="320.0" onAction="#btnSignUpOnAction" prefHeight="23.0" prefWidth="57.0" styleClass="hover" stylesheets="@javaFX.css" text="Sign up" textFill="#007aff">
+         <JFXButton fx:id="btnSignUp" layoutX="181.0" layoutY="320.0" onAction="#btnSignUpOnAction" prefHeight="23.0" prefWidth="57.0" styleClass="hover" stylesheets="@javaFX.css" text="Sign up" textFill="#007aff">
             <font>
                <Font name="SansSerif Regular" size="12.0" />
             </font>

@@ -8,9 +8,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmployeeModel {
-    private Long id;
+    private String id;
     private String name;
     private String email;
     private String password;
-    private String role;
+    private String role="Employee";
+    private Double salary;
+    private String address;
+    private String phoneNumber;
+
 }
