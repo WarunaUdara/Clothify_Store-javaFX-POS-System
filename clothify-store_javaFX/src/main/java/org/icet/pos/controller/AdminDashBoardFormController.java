@@ -11,8 +11,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import org.icet.pos.bo.custom.impl.AdminDashBoardBoImpl;
 import org.icet.pos.bo.factory.BoFactory;
 import org.icet.pos.bo.factory.BoType;
@@ -23,6 +28,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 import javafx.animation.PauseTransition;
+import org.icet.pos.util.FormUtil;
+import org.icet.pos.util.HibernateUtil;
 
 @Slf4j
 public class AdminDashBoardFormController implements Initializable {
@@ -34,15 +41,15 @@ public class AdminDashBoardFormController implements Initializable {
     public TextField txtSalary;
     public TextField txtAddress;
     public TextField txtContact;
-    public TableView tblEmployee;
-    public TableColumn colId;
-    public TableColumn colName;
-    public TableColumn colEmail;
-    public TableColumn colPasssword;
-    public TableColumn colSalary;
-    public TableColumn colAddress;
-    public TableColumn colRole;
-    public TableColumn colContact;
+    public TableView<EmployeeModel> tblEmployee;
+    public TableColumn<EmployeeModel, String> colId;
+    public TableColumn<EmployeeModel, String> colName;
+    public TableColumn<EmployeeModel, String> colEmail;
+    public TableColumn<EmployeeModel, String> colPasssword;
+    public TableColumn<EmployeeModel, Double> colSalary;
+    public TableColumn<EmployeeModel, String> colAddress;
+    public TableColumn<EmployeeModel, String> colRole;
+    public TableColumn<EmployeeModel, String> colContact;
     public JFXButton btnAddEmployee;
     public JFXButton btnUpdate;
     public JFXButton btnRemove;
@@ -63,6 +70,7 @@ public class AdminDashBoardFormController implements Initializable {
     private static final Pattern phonePattern = Pattern.compile(PHONE_PATTERN);
 
     private final AdminDashBoardBoImpl controller = BoFactory.getInstance().getBo(BoType.ADMIN_DASHBOARD);
+    public JFXButton btnReport;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -70,6 +78,7 @@ public class AdminDashBoardFormController implements Initializable {
         txtId.setText(lblNewEmpId.getText());
         lblTotalEmployees.setText(String.format("%03d", controller.getTotalEmployees() - 1));
         btnAddEmployee.setDisable(true);
+        btnUpdate.setDisable(true);
 
         txtId.setOnKeyReleased(this::empIdKeyReleasedOnAction);
         txtName.setOnKeyReleased(this::txtNameKeyReleasedOnAction);
@@ -97,7 +106,7 @@ public class AdminDashBoardFormController implements Initializable {
     }
 
     private void loadEmployeeTable() {
-        ObservableList<EmployeeModel> list = FXCollections.observableArrayList();
+        ObservableList<EmployeeModel> list;
         list = controller.getAllEmployees();
         tblEmployee.setItems(list);
     }
@@ -174,11 +183,14 @@ public class AdminDashBoardFormController implements Initializable {
         boolean isAddressValid = validateAddress();
         boolean isPhoneValid = validatePhone();
 
-        if (isIdValid && isNameValid && isEmailValid && isPasswordValid && isSalaryValid && isAddressValid && isPhoneValid) {
-            btnAddEmployee.setDisable(false);
+        boolean allFieldsValid = isIdValid && isNameValid && isEmailValid &&
+                isPasswordValid && isSalaryValid && isAddressValid && isPhoneValid;
+
+        btnAddEmployee.setDisable(!allFieldsValid);
+        btnUpdate.setDisable(!allFieldsValid);
+
+        if (allFieldsValid) {
             lblNotify.setText("");
-        } else {
-            btnAddEmployee.setDisable(true);
         }
     }
 
@@ -234,13 +246,16 @@ public class AdminDashBoardFormController implements Initializable {
 
     public void btnAddEmployeeOnAction(ActionEvent actionEvent) {
         Double salary = Double.parseDouble(txtSalary.getText());
-        EmployeeModel newEmployee = new EmployeeModel(txtId.getText(), txtName.getText(), txtEmail.getText(), txtPassword.getText(), "Employee", salary, txtAddress.getText(), txtContact.getText());
+        EmployeeModel newEmployee =
+                new EmployeeModel(txtId.getText(), txtName.getText(), txtEmail.getText(), txtPassword.getText(),
+                        "Employee", salary, txtAddress.getText(), txtContact.getText());
         controller.persist(newEmployee);
 
         // Email content
         String subject = "Welcome to the Company!";
         String message = String.format(
-                "Dear %s,\n\nWelcome to the company! Here are your details:\n\nEmail: %s\nPassword: %s\nSalary: %s\n\nBest regards,\nCompany Owner",
+                "Dear %s,\n\nWelcome to the company! Here are your details:\n\n" +
+                        "Email: %s\nPassword: %s\nSalary: %s\n\nBest regards,\nCompany Owner",
                 txtName.getText(), txtEmail.getText(), txtPassword.getText(), txtSalary.getText());
 
         // Send email
@@ -253,7 +268,6 @@ public class AdminDashBoardFormController implements Initializable {
         clearFields();
         btnAddEmployee.setDisable(true);
         loadEmployeeTable();
-
     }
 
     private void clearFields() {
@@ -266,10 +280,69 @@ public class AdminDashBoardFormController implements Initializable {
     }
 
     public void btnUpdateOnAction(ActionEvent actionEvent) {
-        // Implement update logic here
+        if (txtId.getText().isEmpty() || txtName.getText().isEmpty() || txtEmail.getText().isEmpty() ||
+                txtPassword.getText().isEmpty() || txtSalary.getText().isEmpty() ||
+                txtAddress.getText().isEmpty() || txtContact.getText().isEmpty()) {
+            btnUpdate.setDisable(true);
+            showNotification("All fields must be filled");
+            return;
+        }
+
+        Double salary = Double.parseDouble(txtSalary.getText());
+        EmployeeModel updatedEmployee = new EmployeeModel(txtId.getText(), txtName.getText(), txtEmail.getText(),
+                txtPassword.getText(), "Employee", salary, txtAddress.getText(), txtContact.getText());
+
+        controller.updateEmployee(updatedEmployee);
+        loadEmployeeTable();
+        clearFields();
+        showNotification("Employee updated successfully");
     }
 
     public void btnRemoveOnAction(ActionEvent actionEvent) {
-        // Implement remove logic here
+        String id = txtId.getText();
+        if (id == null || id.isEmpty()) {
+            showNotification("ID cannot be empty");
+            return;
+        }
+
+        controller.removeEmployeeById(id);
+        loadEmployeeTable();
+        clearFields();
+        lblNewEmpId.setText(controller.getNewEmployeeId());
+        lblTotalEmployees.setText(String.format("%03d", controller.getTotalEmployees() - 1));
+        showNotification("Employee removed successfully");
+    }
+
+    public void btnLogOurOnAction(ActionEvent actionEvent) {
+        Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
+        FormUtil.switchScene(stage, "loginForm.fxml");
+    }
+
+    public void btnSearchEmployeeOnAction(ActionEvent actionEvent) {
+        String id = txtId.getText();
+        EmployeeModel employee = controller.findEmployeeById(id);
+        if (employee != null) {
+            txtName.setText(employee.getName());
+            txtEmail.setText(employee.getEmail());
+            txtPassword.setText(employee.getPassword());
+            txtSalary.setText(employee.getSalary().toString());
+            txtAddress.setText(employee.getAddress());
+            txtContact.setText(employee.getPhoneNumber());
+            showNotification("Employee found and data loaded");
+        } else {
+            showNotification("Employee not found");
+            clearFields(); // Clear fields if employee not found
+        }
+    }
+
+    public void btnReportOnAction(ActionEvent actionEvent) {
+//        try {
+//            JasperDesign design = JRXmlLoader.load("src/main/resources/reports/employee report.jrxml");
+//            JasperReport jasperReport = JasperCompileManager.compileReport(design);
+//            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, HibernateUtil.getSession());
+//            JasperViewer.viewReport(jasperPrint,false);
+//        } catch (JRException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 }

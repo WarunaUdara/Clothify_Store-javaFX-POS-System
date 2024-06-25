@@ -6,6 +6,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.icet.pos.dao.custom.CustomerDao;
 import org.icet.pos.entity.CustomerEntity;
+import org.icet.pos.entity.EmployeeEntity;
 import org.icet.pos.util.HibernateUtil;
 
 import java.util.List;
@@ -72,5 +73,16 @@ public class CustomerDaoImpl implements CustomerDao {
         } catch (HibernateException e) {
             log.error("Exception: ", e);
         }
+    }
+    @Override
+    public void deleteById(String id) {
+        Session session = HibernateUtil.getSession();
+        session.beginTransaction();
+        CustomerEntity entity = session.get(CustomerEntity.class, id);
+        if (entity != null) {
+            session.delete(entity);
+        }
+        session.getTransaction().commit();
+        session.close();
     }
 }

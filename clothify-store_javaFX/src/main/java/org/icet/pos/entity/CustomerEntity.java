@@ -15,12 +15,12 @@ import java.util.Date;
 @Entity(name = "customer")
 public class CustomerEntity {
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private String id;
     private String name;
-//    private Date dob;
-//    private String address;
-//    private String city;
-//    private String province;
-//    private String postalCode;
+    private String address;
+    private String city;
+    private String province;
+    private String postalCode;
+    private String email;
+    private String contact;
 }

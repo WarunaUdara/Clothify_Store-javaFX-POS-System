@@ -16,4 +16,6 @@ public interface CustomerDao extends CrudDao<CustomerEntity, String> {
     void update(CustomerEntity entity);
 
     void delete(CustomerEntity entity);
+
+    void deleteById(String id);
 }

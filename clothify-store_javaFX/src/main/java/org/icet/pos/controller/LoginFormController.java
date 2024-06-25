@@ -2,10 +2,7 @@ package org.icet.pos.controller;
 
 import com.jfoenix.controls.JFXButton;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -17,8 +14,8 @@ import org.icet.pos.bo.factory.BoFactory;
 import org.icet.pos.bo.custom.impl.LoginBoImpl;
 import org.icet.pos.model.EmployeeModel;
 import org.icet.pos.bo.factory.BoType;
+import org.icet.pos.util.FormUtil;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -63,14 +60,9 @@ public class LoginFormController implements Initializable {
                 if (txtEmail.getText().equals(employee.getEmail())) {
                     if (txtPassword.getText().equals(employee.getPassword())) {
                         isExistingEmployee.set(true);
-                        btnLogin.getScene().getWindow().hide();
-                        Parent root = FXMLLoader.load(getClass().getResource("/view/dashBoardForm.fxml"));
-
-                        Stage stage = new Stage();
-                        Scene scene = new Scene(root);
-
-                        stage.setScene(scene);
-                        stage.show();
+                        Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
+//                        FormUtil.switchScene(stage, "dashBoardForm.fxml");
+                        FormUtil.switchScene(stage, "ManageCustomerForm.fxml");
 
                         break;
 
@@ -101,15 +93,9 @@ public class LoginFormController implements Initializable {
 
     public void btnForgetPasswordOnAction(ActionEvent actionEvent) {
         try {
-            btnForgetPw.getScene().getWindow().hide();
-            Parent root = FXMLLoader.load(getClass().getResource("/view/forgetPasswordForm.fxml"));
-
-            Stage stage = new Stage();
-            Scene scene = new Scene(root);
-
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
+            Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
+            FormUtil.switchScene(stage, "forgetPasswordForm.fxml");
+        } catch (Exception e) {
             log.error("Exception : ",e);
         }
 

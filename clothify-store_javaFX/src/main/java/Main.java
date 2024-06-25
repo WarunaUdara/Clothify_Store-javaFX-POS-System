@@ -2,10 +2,15 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.icet.pos.dao.custom.impl.CustomerDaoImpl;
+import org.icet.pos.dao.factory.DaoFactory;
+import org.icet.pos.dao.factory.DaoType;
+import org.icet.pos.entity.CustomerEntity;
+
+import java.util.List;
 
 public class Main extends Application {
     public static void main(String[] args){
-
         launch();
     }
 

@@ -50,6 +50,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
         session.close();
     }
 
+
     @Override
     public void delete(EmployeeEntity entity) {
         Session session = HibernateUtil.getSession();
@@ -58,4 +59,29 @@ public class EmployeeDaoImpl implements EmployeeDao {
         session.getTransaction().commit();
         session.close();
     }
+
+    public void updatePassword(String email, String newPassword) {
+        Session session = HibernateUtil.getSession();
+        session.beginTransaction();
+        String hql = "UPDATE employee SET password = :password WHERE email = :email";
+        Query query = session.createQuery(hql);
+        query.setParameter("password", newPassword);
+        query.setParameter("email", email);
+        query.executeUpdate();
+        session.getTransaction().commit();
+        session.close();
+    }
+    @Override
+    public void deleteById(String id) {
+        Session session = HibernateUtil.getSession();
+        session.beginTransaction();
+        EmployeeEntity entity = session.get(EmployeeEntity.class, id);
+        if (entity != null) {
+            session.delete(entity);
+        }
+        session.getTransaction().commit();
+        session.close();
+    }
+
+
 }

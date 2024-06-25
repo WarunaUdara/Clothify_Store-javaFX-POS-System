@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -14,10 +13,11 @@ import java.util.Date;
 public class CustomerModel {
     private String id;
     private String name;
-//    private Date dob;
-//    private String address;
-//    private String city;
-//    private String province;
-//    private String postalCode;
+    private String address;
+    private String city;
+    private String province;
+    private String postalCode;
+    private String email;
+    private String contact;
 
 }

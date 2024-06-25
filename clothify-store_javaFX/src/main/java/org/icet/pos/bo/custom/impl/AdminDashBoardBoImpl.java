@@ -11,14 +11,12 @@ import org.icet.pos.dao.factory.DaoType;
 import org.icet.pos.model.EmployeeModel;
 import org.modelmapper.ModelMapper;
 
-
 public class AdminDashBoardBoImpl implements AdminDashBoardBo {
     private EmployeeDao employeeDao = DaoFactory.getInstance().getDao(DaoType.EMPLOYEE);
-    private ModelMapper mapper=new ModelMapper();
-
+    private ModelMapper mapper = new ModelMapper();
 
     @Getter
-    private  Integer totalEmployees=0;
+    private Integer totalEmployees = 0;
 
     @Override
     public String getNewEmployeeId() {
@@ -27,10 +25,8 @@ public class AdminDashBoardBoImpl implements AdminDashBoardBo {
             id = String.valueOf(employee.getId());
             totalEmployees++;
         }
-
         return generateNewEmployeeId(id);
     }
-
 
     public String generateNewEmployeeId(String empId) {
         if (empId.equals("null")) {
@@ -40,18 +36,32 @@ public class AdminDashBoardBoImpl implements AdminDashBoardBo {
         return String.format("E%04d", x); // Format with leading zeros
     }
 
-
     public void persist(EmployeeModel employee) {
-
         employeeDao.persist(mapper.map(employee, EmployeeEntity.class));
     }
 
     public ObservableList<EmployeeModel> getAllEmployees() {
-        ObservableList<EmployeeModel> list= FXCollections.observableArrayList();
+        ObservableList<EmployeeModel> list = FXCollections.observableArrayList();
         for (EmployeeEntity employee : employeeDao.findAll()) {
             EmployeeModel employeeModel = mapper.map(employee, EmployeeModel.class);
             list.add(employeeModel);
         }
         return list;
     }
+
+    public EmployeeModel findEmployeeById(String id) {
+        EmployeeEntity employeeEntity = employeeDao.findById(id);
+        if (employeeEntity != null) {
+            return mapper.map(employeeEntity, EmployeeModel.class);
+        }
+        return null; // or throw an exception if the employee is not found
+    }
+    public void removeEmployeeById(String id) {
+        employeeDao.deleteById(id);
+    }
+    public void updateEmployee(EmployeeModel employee) {
+        employeeDao.update(mapper.map(employee, EmployeeEntity.class));
+    }
+
+
 }

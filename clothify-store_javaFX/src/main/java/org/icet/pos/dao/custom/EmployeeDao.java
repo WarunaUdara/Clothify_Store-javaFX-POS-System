@@ -15,4 +15,6 @@ public interface EmployeeDao extends CrudDao<EmployeeEntity, String> {
     void update(EmployeeEntity entity);
 
     void delete(EmployeeEntity entity);
+
+    void deleteById(String id);
 }
